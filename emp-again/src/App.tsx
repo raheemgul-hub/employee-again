@@ -153,23 +153,21 @@ function App() {
     return depname;
   }
 
-
-
 return (
   <div className='main'>
-    {/* NAV-bAR */}
+    {/* nav bar */}
     <div className='nav-bar'>
         <i className="fa-solid fa-house home"onClick={homebutton}></i>
         <div className='emp'>
           <button type='button' className='btn btn-success info'onClick={adddepartmentbutton}>
-          <i className="fas fa-graduation-cap"></i>
-         {formMode ===0?'Manage-department':'Back to main'}
+          <i className={formMode==0?'fas fa-graduation-cap':"fa-solid fa-circle-left"}></i>
+         {formMode ===0?'Manage-department':'Back To Main'}
           </button>
           <i className="fa-solid fa-user"></i>
           Employee management
        </div> 
     </div>
-    {/* department COMponeNT*/}
+    {/* department Component*/}
     <div className={formMode===4?'containe':'containe d-none'}>
     <Department></Department>
     </div>
