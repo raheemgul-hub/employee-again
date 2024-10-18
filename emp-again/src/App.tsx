@@ -20,7 +20,7 @@ function App() {
   const [level, setLevel] = useState('');
   const [passingYear, setPassingYear] = useState(0);
   const [percentage, setPercentage] = useState(0);
-  let id =useRef<number>(0)
+  let educationId =useRef<number>(0)
   const [education, setEducation] = useState<IEducation[]>([]);
 
   //get departement data from local storage//
@@ -270,7 +270,7 @@ return (
       name="department" 
       id="department" 
       value={departmentId}
-      onChange={(e:any)=>setDepartment(e.target.value)}>
+      onChange={(e:any)=>setDepartmentId(e.target.value)}>
         <option value="0" disabled>select department</option>
         {departmentData.map((d)=>(
           <option value={d.id} key={d.id}>
