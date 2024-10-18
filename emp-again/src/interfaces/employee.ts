@@ -5,5 +5,12 @@ export interface iEmployee{
     email:string;
     address:string;
     phone:string;
-    departmentId:number
+    departmentId:number;
+    education:Array<IEducation>
+  }
+  export interface IEducation {
+    educationId: number;
+    level:string;
+    passingYear: number;
+    percentage: number
   }

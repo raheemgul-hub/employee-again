@@ -1,7 +1,7 @@
 import { useRef,useEffect ,useState } from 'react'
 import './App.css'
 import Department from './Department'; 
-import { iEmployee } from './interfaces/employee';
+import { IEducation, iEmployee } from './interfaces/employee';
 import { IDepartment } from './interfaces/department';
 
 function App() {
@@ -10,12 +10,19 @@ function App() {
   const[email,setEmail]=useState('');
   const[address,setAddress]=useState('');
   const[phone,setPhone]=useState('');
-  let [departmentId,setDepartmentId]=useState(0)
+  let  [departmentId,setDepartmentId]=useState(0)
   const[employee,setEmployee]=useState<iEmployee[]>([]);
   const[formMode,setFormMode]=useState(0)
   const id =useRef<number>(0)
   const [editId, setEditId] = useState<number>(0);
   const [departmentData,setDepartmentData]=useState<IDepartment[]>([])
+  //--------education usestate()-----------//
+  const [level, setLevel] = useState('');
+  const [passingYear, setPassingYear] = useState(0);
+  const [percentage, setPercentage] = useState(0);
+  let id =useRef<number>(0)
+  const [education, setEducation] = useState<IEducation[]>([]);
+
   //get departement data from local storage//
   useEffect(()=>{
     if(localStorage.getItem('dep')){
@@ -23,9 +30,6 @@ function App() {
       setDepartmentData(old_data)
     }
   },[])
-
-
-
   //get employee old data from local storage//
   useEffect(()=>{
     const storedData=localStorage.getItem('emp')
@@ -60,7 +64,7 @@ function App() {
       setFormMode(0)
     }
   }
-  
+  //save and edit//
   const save=()=>{
     //new-save//
     if(firstname && lastname && email && address && phone){
@@ -72,7 +76,8 @@ function App() {
           email,
           address,
           phone,
-          departmentId
+          departmentId,
+          education:[]
         }
         id.current++
         const newsave=[...employee,obj]
@@ -152,10 +157,41 @@ function App() {
     })
     return depname;
   }
+  //--------------------------------education--------------------//
+  const educationbutton=(_education: IEducation[])=>{
+    setFormMode(5)
+  }
 
+  //add education button//
+  const addedu=()=>{
+    setFormMode(6)
+  }
+
+//back education//
+const backedu=()=>{
+    setFormMode(5)
+}
+const Saveeducation=()=>{
+ if(level&&passingYear&&percentage){
+  if(formMode==6){
+    const obj:IEducation={
+      educationId:educationId.current,
+      level,
+      passingYear,
+      percentage,
+    }
+    educationId.current++
+    const newsave=[...education,obj]
+    setEducation(newsave)
+  }
+
+ }
+ setFormMode(5)
+}
+//--------------------Return-------------------------------------//
 return (
   <div className='main'>
-    {/* nav bar */}
+    {/* nav bar for all mangement system */}
     <div className='nav-bar'>
         <i className="fa-solid fa-house home"onClick={homebutton}></i>
         <div className='emp'>
@@ -171,7 +207,7 @@ return (
     <div className={formMode===4?'containe':'containe d-none'}>
     <Department></Department>
     </div>
-    {/* add-form */}
+    {/*employee add-form */}
     <div className={formMode === 1 || formMode === 2 ? 'container' : 'container d-none'}>
       <div className="header">
         <h2 className={formMode==1?'new':'new d-none'}>New Employee</h2>
@@ -226,7 +262,7 @@ return (
       onChange={(e)=>setPhone(e.target.value)}
       />
 
-       <label htmlFor="DEPARTMENT">
+      <label htmlFor="DEPARTMENT">
         Department<span>*</span>
       </label>
       <select 
@@ -234,7 +270,7 @@ return (
       name="department" 
       id="department" 
       value={departmentId}
-      onChange={(e:any)=>setDepartmentId(e.target.value)}>
+      onChange={(e:any)=>setDepartment(e.target.value)}>
         <option value="0" disabled>select department</option>
         {departmentData.map((d)=>(
           <option value={d.id} key={d.id}>
@@ -251,9 +287,9 @@ return (
       </button>
       </form>
      
-  </div>
-    {/* table */}
-  <div>
+    </div>
+    {/* employee table */}
+    <div>
   <div className={formMode==0?'table-container':'table-container d-none'}>
     <div className='header'>
     <h2>Manage Employees</h2>
@@ -284,11 +320,11 @@ return (
         <td>{e.email}</td>
         <td>{e.address}</td>
         <td>{e.phone}</td>
-        <td>{printdepartment(e.departmentId)}</td>
+          <td>{printdepartment(e.departmentId)}</td> 
         <td className='ICON'>
           <i className="fa-solid fa-pen action-icon1"onClick={()=>editbutton(e.id)}></i>
           <i className="fa-solid fa-trash action-icon2" onClick={()=>deletebutton(e.id)}></i>
-          <i className="fas fa-graduation-cap action-icon3" >EDU</i>
+          <i className="fas fa-graduation-cap action-icon3"onClick={()=>educationbutton(e.education)}>EDU</i>
         </td>
       </tr>
       ))}
@@ -296,9 +332,97 @@ return (
   </table>
       </div>
     </div>
+     {/* educaton form */}
+    <div className={formMode === 6 || formMode === 7 ? 'container' : 'container d-none'}>
+      <div className="header">
+        <h2 className={formMode==6?'new':'new d-none'}>Education</h2>
+        <h2 className={formMode==7?'update':'update d-none'}>Update Education</h2>
+        <button className="back-btn" onClick={backedu}>BACK</button>
+      </div>
+        <form className="employee-form">
+        <label htmlFor="level">
+        Level<span>*</span>
+      </label>
+      <select 
+      defaultValue={0}
+      name="level" 
+      id="level" 
+      value={level}
+      onChange={(e:any)=>setLevel(e.target.value)}>
+        <option value="0" disabled>select level</option>
+        <option value="Matric">Matric</option>
+        <option value="FSc">FSc</option>
+        <option value="ICS">ICS</option>
+        <option value="BSc">BSc</option>
+        <option value="BS">BS</option>
+        <option value="MS">MS</option>
+      </select>
+
+        <label htmlFor="passing year">
+          Passing Year <span>*</span>
+        </label>
+        <input type="text" 
+          id="passingyear" 
+          value={passingYear}
+          onChange={(e:any)=>setPassingYear(e.target.value)}
+        />
+
+      <label htmlFor="percentage">
+          percentage <span>*</span>
+        </label>
+        <input type="text" 
+          id="percentage" 
+          value={percentage}
+          onChange={(e:any)=>setPercentage(e.target.value)}
+        />
+        <button 
+      type="button"
+      className="submit-btn" 
+      onClick={Saveeducation}
+      >
+        Save
+      </button>
+        </form>
+    </div>
+    {/* education table */}
+    <div className={formMode==5?'table-container':'table-container d-none'}>
+      <div className='header'>
+        <h2>Degree Of{firstname}</h2>
+        <button className='add-btn' onClick={addedu}>
+          <i className="fa-solid fa-plus"></i> ADD
+        </button>
+      </div>
+      <table className='employee-table table table-bordered'>
+    <thead>
+      <tr>
+        <th>EducationId</th>
+        <th>Level</th>
+        <th>passing year</th>
+        <th>percentage</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody className='table-group-divider'>
+      {education.map((e:IEducation)=>(
+        <tr className='table' key={e.educationId}>
+        <td>{e.educationId}</td>
+        <td>{e.level}</td>
+        <td>{e.passingYear}</td>
+        <td>{e.percentage}</td>
+        <td className='ICON'>
+          <i className="fa-solid fa-pen action-icon1"onClick={()=>editbutton(e.educationId)}></i>
+          <i className="fa-solid fa-trash action-icon2" onClick={()=>deletebutton(e.educationId)}></i>
+        </td>
+      </tr>
+      ))}
+    </tbody>
+  </table>
+    </div>
+   
   </div>
 )
 }
 
 export default App
+
 
